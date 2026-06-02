@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>💚 决战NCTU之巅！ 💚</title>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  background: #f2f7f4;
+  color: #2c3e35;
+  text-align: center;
+  padding-bottom: 50px;
+  margin: 0;
+}
+
+h2 {
+  margin: 20px;
+  color: #1c3823;
+}
+
+/* 提示加载中的特殊样式 */
+#loadingStatus {
+  background: #eef7f2;
+  color: #5fa874;
+  padding: 15px;
+  border-radius: 12px;
+  display: inline-block;
+  margin: 20px auto;
+  font-weight: bold;
+}
+
+/* 通用按钮样式 */
+.btn-common {
+  background: #5fa874;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  font-size: 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+  transition: all 0.2s;
+  margin: 10px auto 20px;
+}
+
+.btn-common:hover {
+  background: #488f5c;
+  transform: translateY(-2px);
+}
+
+/* 底部切换页面按钮的特殊样式 */
+.btn-switch-page {
+  background: #418155;
+  margin-top: 40px;
+}
+
+/* 页面切换核心控制 */
+.page {
+  display: none; 
+}
+.page.active {
+  display: block; 
+}
+
+#container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 15px;
+}
+
+.section {
+  margin: 35px auto;
+  width: 95%;
+  background: #ffffff; 
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(28, 56, 35, 0.04);
+}
+
+.title {
+  font-weight: bold;
+  margin-bottom: 18px;
+  font-size: 16px;
+  color: #1c3823;
+}
+
+.box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* 解放长 ID 的样式（横向自由撑开，不换行，不裁剪） */
+.tag {
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1c3823; 
+  border: 1px solid rgba(0, 0, 0, 0.04); 
+  width: auto;               
+  display: inline-block;
+  white-space: nowrap;       
+  overflow: visible;         
+  text-overflow: clip;       
+}
+
+/* 6 种清凉绿配色方案 */
+.lvl-5000 { background-color: #d1f4ec; } 
+.lvl-4000 { background-color: #e2f0d9; } 
+.lvl-3000 { background-color: #dbf3d1; } 
+.lvl-2000 { background-color: #e5f4e3; } 
+.lvl-1000 { background-color: #d2edd9; } 
+.lvl-500  { background-color: #e0f2f1; } 
+.lvl-0    { background-color: #f0f4f1; } 
+
+/* 搜索查询页专属精致样式 */
+.search-wrapper {
+  max-width: 500px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(28, 56, 35, 0.06);
+}
+
+.search-box {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.search-input {
+  width: 65%;
+  padding: 12px 18px;
+  border: 2px solid #cbdcd0;
+  border-radius: 15px;
+  font-size: 15px;
+  outline: none;
+  color: #1c3823;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  border-color: #5fa874;
+}
+
+/* 个人数据结果卡片 */
+.result-card {
+  background: #eef7f2;
+  border: 1px solid #d2edd9;
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 20px;
+  text-align: left;
+  display: none;
+}
+
+.result-item {
+  font-size: 15px;
+  margin: 10px 0;
+  color: #2c3e35;
+}
+
+.result-item strong {
+  color: #1c3823;
+  font-size: 16px;
+}
+
+/* 鼓励话语样式 */
+.motto-text {
+  margin-top: 35px;
+  font-size: 14px;
+  color: #5fa874;
+  font-weight: 500;
+  line-height: 1.6;
+}
+</style>
+</head>
+
+<body>
+
+<div id="pageLayer" class="page active">
+  <h2>📊 大家辛苦啦</h2>
+  
+  <div id="loadingStatus">⏳ 正在同步西珍妮的最新努力数据...</div>
+  
+  <div id="mainContent" style="display:none;">
+    <button id="exportBtn" class="btn-common">📸 一键导出长图</button>
+    <div id="container"></div>
+    <button id="toSearchPageBtn" class="btn-common btn-switch-page">🔑 进入你的私人存档</button>
+  </div>
+</div>
+
+
+<div id="pageSearch" class="page">
+  <h2>🌿 西珍妮的私人存档</h2>
+  <button id="toLayerPageBtn" class="btn-common">🔙 返回分层看板</button>
+  
+  <div class="search-wrapper">
+    <div class="search-box">
+      <input type="text" id="searchInput" class="search-input" placeholder="输入你的ID进行搜寻...">
+      <button id="searchBtn" class="btn-common" style="margin:0; padding: 0 20px;">查询</button>
+    </div>
+    
+    <div id="resultCard" class="result-card">
+      <div class="result-item">📌 <strong>用户ＩＤ：</strong> <span id="resName">-</span></div>
+      <div class="result-item">📅 <strong>打卡天数：</strong> <span id="resDays">-</span></div>
+      <div class="result-item">⏱️ <strong>学习时长：</strong> <span id="resDuration">-</span></div>
+      <div class="result-item">📖 <strong>累计词数：</strong> <span id="resWords">-</span></div>
+    </div>
+    
+    <div class="motto-text" id="mottoZone">
+      🎵당신의 존재는 그 자체로 아름다워(你的存在本身就是一种美丽)<br>————《Beautiful》💚
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ========================================================
+// 💡 【核心修改区】请把你在 Git 仓库里存放的 CSV 文件的 Raw 链接贴在这里！
+//     获取方法：在 GitHub 上点开你的 CSV 文件，点击右上角的 "Raw" 按钮，然后复制地址栏里的链接！
+// ========================================================
+const csvUrl = "https://raw.githubusercontent.com/你的用户名/你的仓库名/main/你的数据文件名.csv";
+
+
+// 全局缓存数组
+let globalUserData = [];
+
+// 根据分钟数直接判断层级
+function getLevel(m) {
+  if (m >= 5000) return "🥇 5000+ min";
+  if (m >= 4000) return "🔥 4000–5000";
+  if (m >= 3000) return "💪 3000–4000";
+  if (m >= 2000) return "✨ 2000–3000";
+  if (m >= 1000) return "🌱 1000–2000";
+  if (m >= 500) return "📈 500–1000";
+  return "🐣 0–500";
+}
+
+function getColorClass(level) {
+  if (level.includes("5000+")) return "lvl-5000"; 
+  if (level.includes("4000–5000")) return "lvl-4000"; 
+  if (level.includes("3000–4000")) return "lvl-3000"; 
+  if (level.includes("2000–3000")) return "lvl-2000"; 
+  if (level.includes("1000–2000")) return "lvl-1000"; 
+  if (level.includes("500–1000"))  return "lvl-500";  
+  return "lvl-0"; 
+}
+
+// 💡 页面加载时自动从 GitHub 拉取并读取 CSV
+async function fetchCSVData() {
+  const statusDiv = document.getElementById("loadingStatus");
+  try {
+    const response = await fetch(csvUrl);
+    if (!response.ok) throw new Error("无法读取Git里的CSV文件，请检查链接配置");
+    
+    // 使用 arrayBuffer 读取，并内置 4 重乱码安检机制，确保中文不崩
+    const buffer = await response.arrayBuffer();
+    let text = "";
+
+    let decoder = new TextDecoder("utf-8");
+    text = decoder.decode(buffer);
+
+    if (text.includes("") || !text.includes(",")) {
+      decoder = new TextDecoder("gbk");
+      text = decoder.decode(buffer);
+    }
+
+    if (text.includes("") || !text.includes(",")) {
+      decoder = new TextDecoder("utf-16le");
+      text = decoder.decode(buffer);
+    }
+
+    processCSV(text);
+    
+    // 加载成功后隐藏提示，展现主要内容
+    statusDiv.style.display = "none";
+    document.getElementById("mainContent").style.display = "block";
+  } catch (error) {
+    console.error(error);
+    statusDiv.innerText = "❌ 数据加载失败啦！请检查 csvUrl 的链接是否正确配置噢~";
+    statusDiv.style.background = "#fbeeed";
+    statusDiv.style.color = "#d9534f";
+  }
+}
+
+// 解析 CSV 文本
+function processCSV(text) {
+  text = text.replace(/^\uFEFF/, "").replace(/\r/g, "");
+
+  let delimiter = ",";
+  if (!text.includes(",") && text.includes("\t")) {
+    delimiter = "\t";
+  }
+
+  const lines = text.split("\n");
+  let levels = {};
+
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue; 
+
+    let columns = lines[i].split(delimiter);
+    if (columns.length < 4) continue; 
+
+    let name = columns[0].replace(/"/g, "").trim();       
+    let days = columns[1].replace(/"/g, "").trim();       
+    let durationRaw = columns[2].replace(/"/g, "").trim(); 
+    let words = columns[3].replace(/"/g, "").trim();       
+
+    let minutesNumeric = durationRaw.replace("分钟", "");
+    let minutes = parseFloat(minutesNumeric); 
+    if (isNaN(minutes)) minutes = 0; 
+
+    globalUserData.push({
+      name: name,
+      days: days.includes("天") ? days : days + " 天",
+      duration: durationRaw.includes("分钟") ? durationRaw : durationRaw + " 分钟", 
+      words: words.includes("词") ? words : words + " 词"
+    });
+
+    let lvl = getLevel(minutes);
+    if (!levels[lvl]) levels[lvl] = [];
+    levels[lvl].push(name);
+  }
+
+  render(levels);
+}
+
+// 渲染分层
+function render(levels) {
+  const container = document.getElementById("container");
+  container.innerHTML = "";
+
+  const sortedLevels = [
+    "🥇 5000+ min",
+    "🔥 4000–5000",
+    "💪 3000–4000",
+    "✨ 2000–3000",
+    "🌱 1000–2000",
+    "📈 500–1000",
+    "🐣 0–500"
+  ];
+
+  sortedLevels.forEach(level => {
+    if (!levels[level] || levels[level].length === 0) return; 
+
+    const section = document.createElement("div");
+    section.className = "section";
+
+    const title = document.createElement("div");
+    title.className = "title";
+    title.innerText = level;
+    section.appendChild(title);
+
+    const box = document.createElement("div");
+    box.className = "box";
+
+    const colorClass = getColorClass(level);
+
+    levels[level].forEach(name => {
+      const tag = document.createElement("div");
+      tag.className = `tag ${colorClass}`;
+      tag.innerText = name;
+      box.appendChild(tag);
+    });
+
+    section.appendChild(box);
+    container.appendChild(section);
+  });
+}
+
+// 自动初始化执行
+window.onload = fetchCSVData;
+
+// 导出长图
+document.getElementById("exportBtn").addEventListener("click", function() {
+  const container = document.getElementById("container");
+  const originalText = this.innerText;
+  this.innerText = "⏳ 正在生成长图...";
+  this.disabled = true;
+
+  html2canvas(container, {
+    backgroundColor: "#f2f7f4", 
+    useCORS: true,              
+    scale: 2,
+    width: container.scrollWidth,
+    height: container.scrollHeight
+  }).then(canvas => {
+    const image = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = image;
+    link.download = "📊大家都很棒！！！！！.png"; 
+    link.click();
+    this.innerText = originalText;
+    this.disabled = false;
+  }).catch(err => {
+    console.error(err);
+    this.innerText = originalText;
+    this.disabled = false;
+  });
+});
+
+// 页面切换
+document.getElementById("toSearchPageBtn").addEventListener("click", function() {
+  document.getElementById("pageLayer").classList.remove("active");
+  document.getElementById("pageSearch").classList.add("active");
+});
+
+document.getElementById("toLayerPageBtn").addEventListener("click", function() {
+  document.getElementById("pageSearch").classList.remove("active");
+  document.getElementById("pageLayer").classList.add("active");
+});
+
+// 查询功能
+document.getElementById("searchBtn").addEventListener("click", executeSearch);
+document.getElementById("searchInput").addEventListener("keypress", function(e) {
+  if (e.key === "Enter") executeSearch(); 
+});
+
+function executeSearch() {
+  const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+  const card = document.getElementById("resultCard");
+  
+  if (!keyword) {
+    alert("请先输入要查询的 ID ~");
+    return;
+  }
+
+  const foundUser = globalUserData.find(user => user.name.toLowerCase().includes(keyword));
+
+  if (foundUser) {
+    document.getElementById("resName").innerText = foundUser.name;
+    document.getElementById("resDays").innerText = foundUser.days;
+    document.getElementById("resDuration").innerText = foundUser.duration;
+    document.getElementById("resWords").innerText = foundUser.words;
+    card.style.display = "block"; 
+  } else {
+    card.style.display = "none";
+    alert("找不到这个 ID 呢，检查一下是不是输入错啦？");
+  }
+}
+</script>
+
+</body>
+</html>
